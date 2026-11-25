@@ -1,0 +1,145 @@
+---
+import mapAsset from '../../public/barcamp-map.svg?raw';
+
+// Inline the original artwork so its route and labels can animate independently.
+const mapSvg = mapAsset.slice(mapAsset.indexOf('<svg'));
+---
+
+<section class="location" id="location" aria-labelledby="location-heading">
+	<div class="location-copy">
+		<h2 class="content-heading" id="location-heading">In the heart of Zürich</h2>
+		<p>Just 500m from HB.</p>
+		<address>
+			<a href="https://www.google.com/maps/search/?api=1&query=Tellstrasse%2031%2C%20Z%C3%BCrich">
+				<span>Tellstrasse 31</span>
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H18m0 0v4.5M18 6l-7.5 7.5M10.5 7.5H7.125A1.125 1.125 0 0 0 6 8.625v8.25A1.125 1.125 0 0 0 7.125 18h8.25a1.125 1.125 0 0 0 1.125-1.125V13.5" />
+				</svg>
+			</a>
+		</address>
+	</div>
+	<div
+		class="location-map"
+		role="img"
+		aria-label="Walking route from Zürich HB along Europaallee to LivingDocs, Tellstrasse 31."
+		set:html={mapSvg}
+	/>
+</section>
+
+<script>
+	const map = document.querySelector<HTMLElement>('.location-map');
+	if (map) {
+		// These groups belong to the supplied Affinity SVG. Keep the source artwork intact.
+		const dots = Array.from(map.querySelectorAll<SVGElement>('#g405 > path'));
+		const labels = Array.from(map.querySelectorAll<SVGElement>('text'));
+		const pins = map.querySelectorAll<SVGElement>('#test > g');
+		const timing = { start: 0, firstDot: 200, travel: 2000, dotFade: 200, labelFade: 480, streetFade: 1600, pinFade: 1200, hold: 1800, fadeOut: 500, rest: 400 };
+		const dotDelay = (index: number) => {
+			const progress = index / Math.max(1, dots.length - 1);
+			// Keep departure brisk, with a gentle acceleration toward the destination.
+			const paced = 1.25 * progress - 0.25 * progress * progress;
+			return timing.firstDot + paced * timing.travel;
+		};
+		const destinationDelay = dotDelay(dots.length - 1) + 80;
+		const fadeOutStart = destinationDelay + Math.max(timing.labelFade, timing.pinFade) + timing.hold;
+		const cycleDuration = fadeOutStart + timing.fadeOut + timing.rest;
+		const rules: string[] = [];
+		const percent = (milliseconds: number) => `${(milliseconds / cycleDuration * 100).toFixed(4)}%`;
+		const reveal = (element: SVGElement | undefined, delay: number, part: string, fadeDuration?: number) => {
+			if (!element) return;
+			const name = `location-route-${rules.length}`;
+			const fade = fadeDuration ?? (part === 'dot' ? timing.dotFade : part === 'pin' ? timing.pinFade : part === 'street' ? timing.streetFade : timing.labelFade);
+			element.dataset.routePart = part;
+			element.style.setProperty('--route-animation', name);
+			rules.push(`@keyframes ${name} {
+				0%, ${percent(delay)} { opacity: 0; }
+				${percent(delay + fade)}, ${percent(fadeOutStart)} { opacity: 1; }
+				${percent(fadeOutStart + timing.fadeOut)}, 100% { opacity: 0; }
+			}`);
+		};
+
+		if (dots.length && pins.length === 2) {
+			reveal(pins[0], timing.start, 'pin');
+			reveal(pins[1], destinationDelay, 'pin');
+			dots.forEach((dot, index) => reveal(dot, dotDelay(index), 'dot', index === 0 ? 120 : timing.dotFade));
+			labels.forEach(label => {
+				const text = label.textContent?.trim();
+				if (text === 'Zürich HB') reveal(label, timing.start, 'start');
+				if (text === 'Europaallee') reveal(label, dotDelay(6), 'street');
+				if (text === 'LivingDocs' || text === 'Tellstrasse 31') reveal(label, destinationDelay, 'destination');
+			});
+
+			// The full map remains visible if JavaScript or IntersectionObserver is unavailable.
+			if ('IntersectionObserver' in window) {
+				const stylesheet = document.createElement('style');
+				stylesheet.textContent = rules.join('\n');
+				map.append(stylesheet);
+				map.style.setProperty('--route-duration', `${cycleDuration}ms`);
+				map.classList.add('route-ready');
+				let inView = false;
+				const syncPlayback = () => {
+					map.classList.toggle('route-playing', inView && !document.hidden);
+				};
+				const observer = new IntersectionObserver(([entry]) => {
+					inView = entry.isIntersecting && entry.intersectionRatio >= 0.3;
+					syncPlayback();
+				}, { threshold: 0.3 });
+				observer.observe(map);
+				document.addEventListener('visibilitychange', syncPlayback);
+				document.addEventListener('astro:before-swap', () => {
+					observer.disconnect();
+					document.removeEventListener('visibilitychange', syncPlayback);
+				}, { once: true });
+			}
+		}
+	}
+</script>
+
+<style>
+	.location {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+		align-items: center;
+		gap: var(--space-xl);
+		padding-block-start: var(--content-section-gap);
+		border-top: 1px solid var(--content-border);
+	}
+	address { font-style: normal; font-weight: 500; line-height: 1.75; }
+	.location-copy .content-heading { margin-bottom: var(--space-sm); }
+	p { margin: 0 0 var(--space-xs); color: var(--color-muted); line-height: 1.75; text-wrap: pretty; }
+	a {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-xs);
+		min-height: 44px;
+		border-radius: var(--space-xs);
+		color: var(--color-brand);
+		text-decoration: none;
+		transition: color 120ms ease;
+	}
+	a:is(:hover, :focus-visible) { color: color-mix(in oklch, var(--color-brand) 70%, var(--color-text)); }
+	a:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 2px; }
+	a svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
+	@media (prefers-reduced-motion: reduce) {
+		a { transition: none; }
+	}
+	.location-map { width: 100%; overflow: hidden; border-radius: var(--content-radius); }
+	.location-map :global(svg) { display: block; width: 100%; height: auto; }
+	.location-map.route-ready :global([data-route-part]) { opacity: 0; }
+	.location-map.route-ready :global([data-route-part]) {
+		animation: var(--route-animation) var(--route-duration) cubic-bezier(0.22, 1, 0.36, 1) infinite both;
+		animation-play-state: paused;
+	}
+	.location-map.route-playing :global([data-route-part]) {
+		animation-play-state: running;
+	}
+	.location-map :global([data-route-part="street"]) {
+		animation-timing-function: ease-in-out;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.location-map.route-ready :global([data-route-part]) { opacity: 1; animation: none; }
+	}
+	@media (max-width: 47.999rem) {
+		.location { grid-template-columns: 1fr; }
+	}
+</style>

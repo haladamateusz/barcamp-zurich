@@ -1,0 +1,82 @@
+---
+import NextEvent from './NextEvent.astro';
+---
+
+<section class="hero" id="hero" aria-labelledby="hero-heading">
+	<div class="hero-layout content-container">
+		<div class="hero-content">
+		<h1 id="hero-heading">An unconference <span>shaped by you.</span></h1>
+		<p>No fixed agenda. Give a 10-minute talk or come to listen - the choice is yours.</p>
+		<a class="hero-link" href="#how-it-works">
+			How it works
+			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7" /></svg>
+		</a>
+		</div>
+		<NextEvent />
+	</div>
+</section>
+
+<style>
+	.hero {
+		position: relative;
+		isolation: isolate;
+		display: grid;
+		place-items: center;
+		min-height: max(41rem, calc(100svh - 1.5rem));
+		padding-block: 11rem 7rem;
+		overflow: hidden;
+		background: var(--color-page);
+		color: var(--color-text);
+		text-align: left;
+	}
+	.hero-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+		align-items: center;
+		gap: clamp(2rem, 5vw, 5rem);
+	}
+	.hero-content { min-width: 0; }
+	h1 {
+		margin: 0;
+		font-size: clamp(3rem, 5vw, 4.5rem);
+		line-height: 1.08;
+		font-weight: 400;
+		letter-spacing: -0.055em;
+		text-wrap: balance;
+	}
+	h1 span { display: block; }
+	p {
+		max-width: 36rem;
+		margin: var(--space-lg) 0 0;
+		color: var(--color-muted);
+		font-size: 1.0625rem;
+		line-height: 1.7;
+		text-wrap: pretty;
+	}
+	.hero-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-lg);
+		min-height: 48px;
+		margin-top: var(--space-xl);
+		padding: var(--space-sm) var(--space-lg);
+		border-radius: var(--radius-pill);
+		background: var(--color-action);
+		color: var(--color-action-text);
+		font-size: 0.9375rem;
+		font-weight: 500;
+		text-decoration: none;
+		transition: background-color 140ms ease;
+	}
+	.hero-link:hover { background: var(--color-action-hover); }
+	.hero-link:focus-visible { outline-color: var(--color-brand); }
+	@media (max-width: 63.999rem) {
+		.hero-layout { grid-template-columns: 1fr; gap: 3rem; }
+	}
+	@media (max-width: 40rem) {
+		.hero { padding-block: 10rem 7rem; }
+		h1 { font-size: clamp(2.25rem, 8.3vw, 3.5rem); letter-spacing: -0.045em; }
+		p { max-width: 28rem; font-size: 1rem; }
+	}
+</style>

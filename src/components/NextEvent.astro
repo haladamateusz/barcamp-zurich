@@ -1,0 +1,59 @@
+<section class="next-event" id="next-event" aria-labelledby="next-event-heading">
+	<div class="event-copy">
+		<h2 class="content-heading" id="next-event-heading">barcamp Zürich #1</h2>
+	</div>
+	<div class="event-details">
+		<dl>
+			<div><dt>When</dt><dd><time datetime="2026-01-20">20 January 2026</time></dd></div>
+			<div><dt>Where</dt><dd>LivingDocs, <a href="https://www.google.com/maps/search/?api=1&query=Tellstrasse%2031%2C%20Z%C3%BCrich">Tellstrasse 31<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H18m0 0v4.5M18 6l-7.5 7.5M10.5 7.5H7.125A1.125 1.125 0 0 0 6 8.625v8.25A1.125 1.125 0 0 0 7.125 18h8.25a1.125 1.125 0 0 0 1.125-1.125V13.5" /></svg></a></dd></div>
+		</dl>
+	</div>
+</section>
+
+<style>
+	.next-event {
+		--content-tint: color-mix(in srgb, var(--color-surface), var(--color-brand) 4%);
+		--content-border: color-mix(in srgb, var(--color-border), var(--color-brand) 12%);
+		--content-radius: 1.5rem;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		align-items: center;
+		gap: var(--space-lg);
+		padding: clamp(1.5rem, 4vw, 3rem);
+		border: 1px solid var(--content-border);
+		border-radius: var(--content-radius);
+		background: var(--content-tint);
+		color: var(--color-text);
+	}
+	.event-copy .content-heading {
+		margin: 0;
+		font-size: clamp(1.75rem, 3vw, 2.25rem);
+		font-weight: 500;
+		line-height: 1.2;
+		letter-spacing: -0.04em;
+		text-wrap: balance;
+	}
+	.event-details { padding-block-start: var(--space-lg); border-top: 1px solid var(--content-border); }
+	dl { display: grid; gap: var(--space-md); margin: 0; font-size: 0.875rem; line-height: 1.65; }
+	dl > div { display: grid; grid-template-columns: 3rem minmax(0, 1fr); align-items: center; gap: var(--space-md); }
+	dt { color: var(--color-muted); }
+	dd { margin: 0; }
+	a {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-xs);
+		min-height: 44px;
+		border-radius: var(--space-xs);
+		color: var(--color-brand);
+		font-weight: 500;
+		line-height: 1.75;
+		text-decoration: none;
+		transition: color 120ms ease;
+	}
+	a:is(:hover, :focus-visible) { color: color-mix(in oklch, var(--color-brand) 70%, var(--color-text)); }
+	a:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 2px; }
+	a svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
+	@media (prefers-reduced-motion: reduce) {
+		a { transition: none; }
+	}
+</style>
