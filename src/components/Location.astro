@@ -124,7 +124,8 @@ const mapSvg = mapAsset.slice(mapAsset.indexOf('<svg'));
 		a { transition: none; }
 	}
 	.location-map {
-		width: 100%;
+		width: min(100%, 31.25rem);
+		justify-self: end;
 		overflow: hidden;
 		border-radius: var(--content-radius);
 		/* Clip the composed SVG once so off-canvas strokes cannot fringe the corners. */
@@ -147,5 +148,6 @@ const mapSvg = mapAsset.slice(mapAsset.indexOf('<svg'));
 	}
 	@media (max-width: 47.999rem) {
 		.location { grid-template-columns: 1fr; }
+		.location-map { justify-self: start; }
 	}
 </style>

@@ -22,6 +22,8 @@ Default page background with left-aligned headline and explanation on the left, 
 
 ## Learned constraints
 
+- 2026-11-25: Keep the location map visually secondary to the location copy: cap it at 500px, align it right in the desktop grid, and align it with the copy when stacked on smaller screens. Preserve its aspect ratio and route animation.
+
 - 2026-11-25: Increase mobile/compact logo floating distance: use 85% of the desktop path amplitude instead of 50%, retaining full icon size, the gentle 80–120 second loops, and content-safe path fitting.
 
 - 2026-11-25: Keep hero framework logos at the same size on mobile and desktop. Remove the compact-screen 55% size reduction and disable automatic size fitting below 1024px; retain the six-logo mobile subset and content-safe placement.
