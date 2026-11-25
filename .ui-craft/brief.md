@@ -22,6 +22,20 @@ Default page background with left-aligned headline and explanation on the left, 
 
 ## Learned constraints
 
+- 2026-11-25: Increase mobile/compact logo floating distance: use 85% of the desktop path amplitude instead of 50%, retaining full icon size, the gentle 80–120 second loops, and content-safe path fitting.
+
+- 2026-11-25: Keep hero framework logos at the same size on mobile and desktop. Remove the compact-screen 55% size reduction and disable automatic size fitting below 1024px; retain the six-logo mobile subset and content-safe placement.
+
+- 2026-11-25: Animate the mobile hamburger strokes into an X, and fade/slide the dropdown in and out. Blur the underlying page with a separate backdrop while expanded so nested glass surfaces do not leave sharp graphics behind the menu. Honor reduced motion; keep Escape, outside click, and navigation closing behavior.
+
+- 2026-11-25: In the mobile dropdown, show Meetup and LinkedIn as text rows below About, after a separator, aligned with the navigation labels. Retain the desktop social icons and keep social labels unlinked until destinations are provided.
+
+- 2026-11-25: Add `var(--space-md)` (16px) of right padding to the mobile Menu button inside the capsule, not to the dropdown social icon group.
+
+- 2026-11-25: Final desktop social icon inset is 24px: the capsule's 16px padding plus 8px on the social icon group.
+
+- 2026-11-25: Final mobile capsule padding is 16px on both sides, with another 16px of right padding inside the Menu button.
+
 - 2026-11-25: Add Redis for 17 desktop/tablet logos, retaining 6 on mobile. Reserve another logo position below the description and to the right of the CTA to fill that opening.
 
 - 2026-11-25: Add TypeScript for 16 desktop/tablet logos, keeping 6 on mobile. Reserve an extra position centrally above the headline in the gap below the navbar.
