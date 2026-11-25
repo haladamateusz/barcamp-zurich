@@ -22,6 +22,8 @@ Default page background with left-aligned headline and explanation on the left, 
 
 ## Learned constraints
 
+- 2026-11-25: About uses one brand-blue portrait backdrop with the shared 24px card corners, without a second frame. The previous blue is restored in preference to the supplied navy swatch. Keep the heads inside the rounded rectangle so the portrait matches the restrained page aesthetic. Place the portrait left and copy right on desktop to alternate with Location; retain copy first when stacked on mobile.
+
 - 2026-11-25: Keep the location map visually secondary to the location copy: cap it at 500px, align it right in the desktop grid, and align it with the copy when stacked on smaller screens. Preserve its aspect ratio and route animation.
 
 - 2026-11-25: Increase mobile/compact logo floating distance: use 85% of the desktop path amplitude instead of 50%, retaining full icon size, the gentle 80–120 second loops, and content-safe path fitting.

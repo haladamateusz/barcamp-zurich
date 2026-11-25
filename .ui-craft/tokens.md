@@ -4,6 +4,7 @@ Source of truth: `src/styles/global.css`.
 
 - Body: Sora. Logo artwork contains its original Montserrat lettering.
 - Brand: #0066cc (wordmark blue), #258dd0 (lion blue).
+- About portrait background: the theme's brand blue via `--color-portrait-background`; one rounded frame enclosing the heads.
 - Hero: default page background and text tokens. Decorative mono logos use `--color-hero-icon`, a 32% brand-blue mix with the page background in both themes.
 - Neutral page/surface: white in light mode; #0a0a0a / #141414 in dark mode.
 - Spacing: 4, 8, 16, 24, 32px; larger section spaces are multiples of 16px.

@@ -67,16 +67,19 @@ import Location from '../components/Location.astro';
 	.about {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		grid-template-areas: "portrait copy";
 		gap: 4rem;
 		align-items: center;
 		padding-block-start: var(--content-section-gap);
 		border-top: 1px solid var(--content-border);
 	}
 
+	.about-copy { grid-area: copy; }
 	.about-copy .organizer-names { margin-top: var(--space-xl); color: var(--color-text); font-weight: 500; }
 	.organizer-caption { margin-top: var(--space-xs); font-size: 0.875rem; }
 
 	.organizers {
+		grid-area: portrait;
 		width: 100%;
 		margin: 0;
 	}
@@ -87,37 +90,16 @@ import Location from '../components/Location.astro';
 	}
 
 	@media (max-width: 47.999rem) {
-		.about { grid-template-columns: 1fr; gap: var(--space-xl); }
+		.about { grid-template-columns: 1fr; grid-template-areas: "copy" "portrait"; gap: var(--space-xl); }
 		.organizers { width: min(100%, 25rem); justify-self: center; }
 	}
 
-	.organizers-portrait::before {
-		content: "";
-		position: absolute;
-		inset: 8% 0 0;
-		border-radius: 72% 25% 46% 54% / 58% 35% 59% 42%;
-		background: var(--content-tint);
-		box-shadow: inset 0 0 0 1px var(--content-border);
-	}
-
 	.organizers-cutout {
-		--backdrop-scale: .88;
-		--curve-right: 58%;
-		--curve-left: 51%;
 		position: absolute;
 		inset: 0 4% 6% 3%;
 		overflow: hidden;
-		/* Keep the top open and match the foreground shape along the bottom. */
-		border-radius: 0 0 46% 54% / 0 0 calc(var(--curve-right) * var(--backdrop-scale)) calc(var(--curve-left) * var(--backdrop-scale));
-	}
-
-	.organizers-cutout::before {
-		content: "";
-		position: absolute;
-		inset: auto 0 0;
-		height: calc(100% * var(--backdrop-scale));
-		border-radius: 62% 29% 46% 54% / 49% 31% var(--curve-right) var(--curve-left);
-		background: var(--color-brand);
+		border-radius: var(--content-radius);
+		background: var(--color-portrait-background);
 	}
 
 	.organizers-cutout img {
