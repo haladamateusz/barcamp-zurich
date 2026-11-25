@@ -42,15 +42,17 @@ export function distributeLogos(width: number, height: number, obstacles: Rect[]
 		let best: typeof candidates[number] | undefined;
 		let bestScore = -1;
 		for (const candidate of candidates) {
+			if (anchors.some((anchor, index) => distance(candidate, anchor)
+				< radii[anchors.length] + radii[index] + padding * 2)) continue;
 			const nearest = anchors.length ? Math.min(...anchors.map(anchor => distance(candidate, anchor))) : Infinity;
 			const score = Math.min(nearest, candidate.space * 2);
 			if (score > bestScore) { best = candidate; bestScore = score; }
 		}
-		if (!best || bestScore < footprint * 2) break;
+		if (!best) break;
 		anchors.push({ x: best.x, y: best.y });
 	}
-	// Tight viewports need smaller decorations, never decorations over the text.
-	if (anchors.length < radii.length && sizeScale > 0.55) {
+	// Compact screens retain the original logo size; never shrink their marks.
+	if (width >= 1024 && anchors.length < radii.length && sizeScale > 0.55) {
 		return distributeLogos(width, height, obstacles, originalRadii, sizeScale * 0.9, preferredRegions);
 	}
 	return anchors.map(point => ({ ...point, sizeScale }));
@@ -176,7 +178,7 @@ export function initHeroBackground(background: HTMLElement) {
 			};
 			const phase = random() * Math.PI * 2;
 			const phaseY = random() * Math.PI * 2;
-			const compactScale = bounds.width < 1024 ? 0.5 : 1;
+			const compactScale = bounds.width < 1024 ? 0.85 : 1;
 			const width = (90 + random() * 60) * compactScale;
 			const height = (65 + random() * 45) * compactScale;
 			const wave = Array.from({ length: 181 }, (_, step) => {
