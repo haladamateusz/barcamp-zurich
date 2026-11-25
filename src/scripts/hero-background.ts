@@ -15,7 +15,7 @@ function clearance(point: Point, width: number, height: number, obstacles: Rect[
 
 // Fill only the usable negative space. Farthest-point sampling keeps neighboring
 // logos similarly spaced even when the content changes shape at a breakpoint.
-export function distributeLogos(width: number, height: number, obstacles: Rect[], originalRadii: number[], sizeScale = 1): (Point & { sizeScale: number })[] {
+export function distributeLogos(width: number, height: number, obstacles: Rect[], originalRadii: number[], sizeScale = 1, preferredRegions: Rect[] = []): (Point & { sizeScale: number })[] {
 	const radii = originalRadii.map(radius => radius * sizeScale);
 	const padding = width < 640 ? 6 : 12;
 	const footprint = Math.max(...radii) + padding;
@@ -28,7 +28,17 @@ export function distributeLogos(width: number, height: number, obstacles: Rect[]
 		}
 	}
 	const anchors: Point[] = [];
-	for (const _ of radii) {
+	// Reserve the requested side spaces before distributing the remaining logos.
+	for (const region of preferredRegions.slice(0, radii.length)) {
+		const center = { x: (region.left + region.right) / 2, y: (region.top + region.bottom) / 2 };
+		const available = candidates.filter(point => point.x >= region.left && point.x <= region.right
+			&& point.y >= region.top && point.y <= region.bottom
+			&& anchors.every(anchor => distance(point, anchor) >= footprint * 2));
+		const best = available.reduce<typeof available[number] | undefined>((nearest, point) =>
+			!nearest || distance(point, center) < distance(nearest, center) ? point : nearest, undefined);
+		if (best) anchors.push({ x: best.x, y: best.y });
+	}
+	for (const _ of radii.slice(anchors.length)) {
 		let best: typeof candidates[number] | undefined;
 		let bestScore = -1;
 		for (const candidate of candidates) {
@@ -41,7 +51,7 @@ export function distributeLogos(width: number, height: number, obstacles: Rect[]
 	}
 	// Tight viewports need smaller decorations, never decorations over the text.
 	if (anchors.length < radii.length && sizeScale > 0.55) {
-		return distributeLogos(width, height, obstacles, originalRadii, sizeScale * 0.9);
+		return distributeLogos(width, height, obstacles, originalRadii, sizeScale * 0.9, preferredRegions);
 	}
 	return anchors.map(point => ({ ...point, sizeScale }));
 }
@@ -72,7 +82,7 @@ export function fitLogoPath(anchor: Point, wave: Point[], radius: number, width:
 export function initHeroBackground(background: HTMLElement) {
 	const hero = background.closest<HTMLElement>('.hero');
 	if (!hero) return;
-	const icons = [...background.querySelectorAll<HTMLElement>('.technology-position')];
+	const allIcons = [...background.querySelectorAll<HTMLElement>('.technology-position')];
 	const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 	const content = [...document.querySelectorAll<HTMLElement>('.site-header, .hero-content, .hero .next-event')];
 	let animations: Animation[] = [];
@@ -87,6 +97,8 @@ export function initHeroBackground(background: HTMLElement) {
 	function layout() {
 		if (disposed) return;
 		animations.forEach(animation => animation.cancel());
+		const icons = allIcons.slice(0, window.matchMedia('(max-width: 40rem)').matches ? 6 : allIcons.length);
+		allIcons.forEach(icon => { icon.hidden = !icons.includes(icon); });
 		const bounds = hero!.getBoundingClientRect();
 		const local = (rect: DOMRect, extra: Partial<Rect> = {}): Rect => {
 			return { left: rect.left - bounds.left, right: rect.right - bounds.left,
@@ -115,7 +127,40 @@ export function initHeroBackground(background: HTMLElement) {
 		icons.forEach(icon => { icon.style.removeProperty('width'); icon.style.removeProperty('height'); });
 		const sizes = icons.map(icon => parseFloat(getComputedStyle(icon).width));
 		const radii = sizes.map(size => size / Math.SQRT2);
-		const positions = distributeLogos(bounds.width, bounds.height, obstacles, radii);
+		const preferredRegions: Rect[] = [];
+		if (bounds.width >= 1024) {
+			const card = hero!.querySelector('.next-event');
+			const heading = hero!.querySelector('h1');
+			const description = hero!.querySelector('.hero-content p');
+			const button = hero!.querySelector('.hero-link');
+			const copy = hero!.querySelector('.hero-content');
+			if (card) {
+				const rect = local(card.getBoundingClientRect());
+				preferredRegions.push({ ...rect, left: rect.right, right: bounds.width });
+			}
+			if (description && button && copy) {
+				const paragraphRect = local(description.getBoundingClientRect());
+				const buttonRect = local(button.getBoundingClientRect());
+				const copyRect = local(copy.getBoundingClientRect());
+				preferredRegions.push({ left: buttonRect.right + 12, right: copyRect.right,
+					top: paragraphRect.bottom + 12, bottom: buttonRect.bottom + 24 });
+			}
+			if (heading) {
+				const rect = local(heading.getBoundingClientRect());
+				preferredRegions.push({ ...rect, left: 0, right: rect.left });
+				const navbar = content.find(element => element.matches('.site-header'));
+				const top = navbar ? local(navbar.getBoundingClientRect()).bottom : 0;
+				// Fill the central opening directly above the headline first.
+				preferredRegions.push({ left: rect.left + (rect.right - rect.left) / 3,
+					right: rect.right - (rect.right - rect.left) / 3, top, bottom: rect.top });
+				// Give each third of the gap above the headline an explicit anchor.
+				for (let column = 0; column < 3; column++) {
+					preferredRegions.push({ left: bounds.width * column / 3,
+						right: bounds.width * (column + 1) / 3, top, bottom: rect.top });
+				}
+			}
+		}
+		const positions = distributeLogos(bounds.width, bounds.height, obstacles, radii, 1, preferredRegions);
 		animations = [];
 		icons.forEach((icon, index) => {
 			const position = positions[index];

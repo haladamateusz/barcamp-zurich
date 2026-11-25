@@ -13,14 +13,24 @@ Sora for site typography. Original SVG logo artwork, including the Montserrat wo
 - Keep How it works, Location, and About centered within the capsule.
 - No Join us navigation button. Original full logo on the left, slightly enlarged.
 - Meetup and LinkedIn icons from Angular Zürich on the right: 20px, unlinked, brighten on hover.
-- Hero background uses 25 approved technology logos from The SVG in their mono variants, tinted with muted brand blue. Space them evenly through the open areas, protecting the navbar, actual text lines, CTA, and rounded event-card surface while allowing logos close to its corners.
+- Hero background uses 17 selected technology logos (6 on mobile) from The SVG in their mono variants, tinted with muted brand blue. Space them evenly through the open areas, protecting the navbar, actual text lines, CTA, and rounded event-card surface while allowing logos close to its corners.
 - No invented event dates, venues, registration links, or attendance claims.
 
 ## Hero composition
 
-Default page background with left-aligned headline and explanation on the left, and the Next event card on the right. Stack the card beneath the text on smaller screens. Signature detail is an evenly distributed field of 25 gently floating technology logos, each on an independent path. Preserve readable text throughout the animation. Use the existing split composition (variance 5); motion stays slow and subtle.
+Default page background with left-aligned headline and explanation on the left, and the Next event card on the right. Stack the card beneath the text on smaller screens. Signature detail is an evenly distributed field of 17 gently floating technology logos (6 on mobile), each on an independent path. Preserve readable text throughout the animation. Use the existing split composition (variance 5); motion stays slow and subtle.
 
 ## Learned constraints
+
+- 2026-11-25: Add Redis for 17 desktop/tablet logos, retaining 6 on mobile. Reserve another logo position below the description and to the right of the CTA to fill that opening.
+
+- 2026-11-25: Add TypeScript for 16 desktop/tablet logos, keeping 6 on mobile. Reserve an extra position centrally above the headline in the gap below the navbar.
+
+- 2026-11-25: Add Angular, Go, and Ollama for 15 desktop/tablet logos, retaining 6 on mobile. Reserve three positions across the open band between navbar and headline, alongside the existing right-of-card and left-of-headline positions.
+
+- 2026-11-25: Reserve one existing logo to the right of the event card and one to the left of the headline on desktop when the side gutters have enough room. Retain the 12 desktop / 6 mobile counts and existing motion safety rules.
+
+- 2026-11-25: Reduce visual density to 12 logos on desktop/tablet and 6 at viewport widths up to 40rem. Keep the existing size, color, and gentle motion. The mobile subset should still represent frontend, programming, AI, containers and CI/CD. This supersedes the earlier 25-logo count.
 
 - 2026-11-25: Make the hero logos more visible: use a 32% brand-blue mix with the page background instead of 18%, retaining the same palette in both themes.
 
