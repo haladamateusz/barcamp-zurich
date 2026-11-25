@@ -123,7 +123,13 @@ const mapSvg = mapAsset.slice(mapAsset.indexOf('<svg'));
 	@media (prefers-reduced-motion: reduce) {
 		a { transition: none; }
 	}
-	.location-map { width: 100%; overflow: hidden; border-radius: var(--content-radius); }
+	.location-map {
+		width: 100%;
+		overflow: hidden;
+		border-radius: var(--content-radius);
+		/* Clip the composed SVG once so off-canvas strokes cannot fringe the corners. */
+		clip-path: inset(0 round var(--content-radius));
+	}
 	.location-map :global(svg) { display: block; width: 100%; height: auto; }
 	.location-map.route-ready :global([data-route-part]) { opacity: 0; }
 	.location-map.route-ready :global([data-route-part]) {
