@@ -1,0 +1,179 @@
+---
+import SocialIcons from './SocialIcons.astro';
+
+const links = [
+	{ label: 'How it works', href: '#how-it-works' },
+	{ label: 'Location', href: '#location' },
+	{ label: 'About', href: '#about' },
+];
+---
+
+<header class="site-header">
+	<a class="brand" href="/" aria-label="barcamp zürich home">
+		<!-- Crop the export's empty canvas while preserving the original artwork. -->
+		<svg class="brand-logo" viewBox="22 342 1876 432" width="220" height="51" aria-hidden="true">
+			<image class="logo-light" href="/logo%20horizontal%20light%20mode.svg" width="1920" height="1080" />
+			<image class="logo-dark" href="/logo%20horizontal%20dark%20mode.svg" width="1920" height="1080" />
+		</svg>
+	</a>
+
+	<nav class="desktop-nav" aria-label="Main navigation">
+		<ul>
+			{links.map(({ label, href }) => <li><a href={href}>{label}</a></li>)}
+		</ul>
+	</nav>
+	<div class="desktop-socials">
+		<SocialIcons />
+	</div>
+
+	<details class="mobile-menu">
+		<summary aria-label="Navigation menu">
+			<span class="menu-label">Menu</span>
+			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+				<path class="menu-lines" d="M4 8h16M4 16h16" />
+				<path class="close-lines" d="m6 6 12 12M6 18 18 6" />
+			</svg>
+		</summary>
+		<nav class="mobile-panel" aria-label="Mobile navigation">
+			<ul>
+				{links.map(({ label, href }) => <li><a href={href}>{label}</a></li>)}
+			</ul>
+			<SocialIcons />
+		</nav>
+	</details>
+</header>
+
+<script>
+	const menu = document.querySelector<HTMLDetailsElement>('.mobile-menu');
+	if (menu) {
+		const summary = menu.querySelector('summary');
+		menu.addEventListener('click', (event) => {
+			if (event.target instanceof Element && event.target.closest('a')) menu.open = false;
+		});
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape' && menu.open) {
+				menu.open = false;
+				summary?.focus();
+			}
+		});
+		document.addEventListener('click', (event) => {
+			if (event.target instanceof Node && !menu.contains(event.target)) menu.open = false;
+		});
+		window.matchMedia('(min-width: 64rem)').addEventListener('change', () => {
+			menu.open = false;
+		});
+	}
+</script>
+
+<style>
+	.site-header {
+		position: fixed;
+		top: max(var(--space-lg), env(safe-area-inset-top));
+		inset-inline: 0;
+		z-index: 10;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+		align-items: center;
+		gap: var(--space-md);
+		width: min(calc((100% - var(--space-xl) * 2) * 0.66), 52.8rem);
+		min-height: 80px;
+		margin: 0 auto;
+		padding: var(--space-md);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-pill);
+		background: var(--color-surface);
+		box-shadow: 0 2px 4px rgb(0 0 0 / 8%), 0 12px 32px rgb(0 0 0 / 8%);
+	}
+
+	.brand {
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+		min-width: 0;
+		min-height: 44px;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.brand-logo { display: block; width: 182px; max-width: 100%; height: auto; flex-shrink: 0; }
+	.logo-dark { display: none; }
+	@media (prefers-color-scheme: dark) {
+		.logo-light { display: none; }
+		.logo-dark { display: block; }
+	}
+
+	nav ul { display: flex; gap: var(--space-lg); margin: 0; padding: 0; list-style: none; }
+	nav a {
+		display: flex;
+		align-items: center;
+		min-height: 44px;
+		color: var(--color-muted);
+		font-size: 0.9375rem;
+		text-decoration: none;
+		transition: color 140ms ease;
+	}
+	nav a:hover { color: var(--color-text); }
+	.desktop-socials { justify-self: end; }
+	.mobile-menu { display: none; }
+
+	@media (max-width: 63.999rem) {
+		.site-header {
+			display: flex;
+			justify-content: space-between;
+			top: max(var(--space-md), env(safe-area-inset-top));
+			width: calc(100% - var(--space-md) * 2);
+			min-height: 80px;
+			gap: var(--space-sm);
+			padding: var(--space-md) var(--space-sm);
+		}
+		.desktop-nav, .desktop-socials { display: none; }
+		.mobile-menu { display: block; }
+		/* Prevent closed details content from contributing overflow in Firefox. */
+		.mobile-menu:not([open]) .mobile-panel { display: none; }
+		summary {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: var(--space-sm);
+			min-height: 44px;
+			min-width: 44px;
+			border-radius: var(--radius-pill);
+			cursor: pointer;
+			list-style: none;
+			font-size: 0.875rem;
+		}
+		summary::-webkit-details-marker { display: none; }
+		summary:hover { color: var(--color-brand); }
+		.close-lines, details[open] .menu-lines { display: none; }
+		details[open] .close-lines { display: block; }
+		.mobile-panel {
+			position: absolute;
+			top: calc(100% + var(--space-sm));
+			left: 0;
+			right: 0;
+			padding: var(--space-md);
+			border: 1px solid var(--color-border);
+			border-radius: var(--space-lg);
+			background: var(--color-surface);
+			box-shadow: 0 12px 32px rgb(0 0 0 / 12%);
+		}
+		.mobile-panel ul { flex-direction: column; gap: var(--space-xs); }
+		.mobile-panel ul a { padding-inline: var(--space-md); }
+	}
+
+	@media (max-width: 30rem) {
+		.menu-label { display: none; }
+	}
+
+	@supports ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+		.site-header, .mobile-panel {
+			background: color-mix(in srgb, var(--color-surface) 76%, transparent);
+			border-color: color-mix(in srgb, var(--color-text) 14%, transparent);
+			-webkit-backdrop-filter: blur(20px) saturate(1.12);
+			backdrop-filter: blur(20px) saturate(1.12);
+		}
+		.mobile-panel {
+			background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+		}
+	}
+</style>

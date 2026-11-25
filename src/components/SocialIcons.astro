@@ -1,0 +1,36 @@
+---
+import MeetupIcon from '../assets/icons/meetup.svg';
+import LinkedInIcon from '../assets/icons/linkedin.svg';
+
+const socials = [
+	{ label: 'Meetup', Icon: MeetupIcon },
+	{ label: 'LinkedIn', Icon: LinkedInIcon },
+];
+---
+
+<div class="social-icons">
+	{socials.map(({ label, Icon }) => (
+		<span role="img" aria-label={label} title={label}>
+			<Icon width="20" height="20" aria-hidden="true" />
+		</span>
+	))}
+</div>
+
+<style>
+	.social-icons {
+		display: flex;
+		justify-content: flex-end;
+		gap: var(--space-xs);
+	}
+	.social-icons span {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		flex-shrink: 0;
+		color: var(--color-muted);
+		transition: color 140ms ease;
+	}
+	.social-icons span:hover { color: var(--color-text); }
+</style>
