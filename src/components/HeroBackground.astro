@@ -1,0 +1,63 @@
+---
+const technologies = [
+	'react', 'angular', 'flutter', 'kotlin', 'python',
+	'rust', 'go', 'pytorch', 'tensorflow', 'hugging-face',
+	'ollama', 'docker', 'kubernetes', 'github-actions', 'jenkins',
+	'terraform', 'postgresql', 'redis', 'apache-kafka', 'grafana',
+	'typescript', 'swift', 'dotnet', 'jupyter', 'langchain',
+];
+
+const icons = technologies.map((slug, index) => ({
+	 slug,
+	 style: {
+		'--icon': `url('/icons/technologies/${slug}.svg')`,
+		'--size': `${(40 + (index * 7 % 21)) * 0.85 * 0.85}px`,
+		'--tilt': `${(index * 11 % 19) - 9}deg`,
+	 },
+}));
+---
+
+<div class="hero-background" aria-hidden="true">
+	{icons.map(({ slug, style }) => (
+		<span class="technology-position" style={style} data-technology={slug}>
+			<span class="technology-icon"></span>
+		</span>
+	))}
+</div>
+
+<script>
+	import { initHeroBackground } from '../scripts/hero-background';
+	const background = document.querySelector<HTMLElement>('.hero-background');
+	if (background) initHeroBackground(background);
+</script>
+
+<style>
+	.hero-background {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+		user-select: none;
+		visibility: hidden;
+	}
+	.hero-background[data-ready] { visibility: visible; }
+	.technology-position {
+		position: absolute;
+		width: var(--size);
+		height: var(--size);
+		transform: translate(-50%, -50%) rotate(var(--tilt));
+	}
+	.technology-icon {
+		display: block;
+		width: 100%;
+		height: 100%;
+		background: var(--color-hero-icon);
+		mask: var(--icon) center / contain no-repeat;
+	}
+	@media (max-width: 63.999rem) {
+		.technology-position {
+			width: calc(var(--size) * 0.55);
+			height: calc(var(--size) * 0.55);
+		}
+	}
+</style>

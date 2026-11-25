@@ -21,6 +21,7 @@
 	--color-text: #101010;
 	--color-muted: #585858;
 	--color-brand: #0066cc;
+	--color-hero-icon: color-mix(in srgb, var(--color-brand) 32%, var(--color-page));
 	--color-action: #101010;
 	--color-action-text: #fafafa;
 	--color-action-hover: #303030;
