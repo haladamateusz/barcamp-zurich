@@ -10,5 +10,12 @@
 	},
 	"observability": {
 		"enabled": true
-	}
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "barcamp-zurich",
+			"database_id": "0bb542d1-00f6-4a8d-9f9b-5c9dc1ba1d1d"
+		}
+	]
 }

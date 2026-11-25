@@ -1,12 +1,60 @@
+---
+import { env } from 'cloudflare:workers';
+
+interface Event {
+	title: string;
+	starts_at: number;
+	venue: string;
+	address: string;
+}
+
+let event: Event | null = null;
+let unavailable = false;
+
+try {
+	event = await env.DB.prepare(`
+		SELECT title, starts_at, venue, address
+		FROM events
+		WHERE published = 1 AND starts_at >= ?1
+		ORDER BY starts_at ASC, id ASC
+		LIMIT 1
+	`).bind(Math.floor(Date.now() / 1000)).first<Event>();
+} catch (error) {
+	unavailable = true;
+	console.error('Failed to load upcoming event', error);
+}
+
+const date = event ? new Date(event.starts_at * 1000) : null;
+const formattedDate = date ? new Intl.DateTimeFormat('en-GB', {
+	dateStyle: 'long',
+	timeZone: 'Europe/Zurich',
+}).format(date) : '';
+const formattedTime = date ? new Intl.DateTimeFormat('en-GB', {
+	hour: '2-digit',
+	minute: '2-digit',
+	hourCycle: 'h23',
+	timeZone: 'Europe/Zurich',
+}).format(date) : '';
+const mapsUrl = event
+	? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${event.venue}, ${event.address}`)}`
+	: '';
+---
+
 <section class="next-event" id="next-event" aria-labelledby="next-event-heading">
 	<div class="event-copy">
-		<h2 class="content-heading" id="next-event-heading">barcamp Zürich #1</h2>
+		<h2 class="content-heading" id="next-event-heading">{event?.title ?? 'Next event'}</h2>
 	</div>
 	<div class="event-details">
-		<dl>
-			<div><dt>When</dt><dd><time datetime="2026-01-20">20 January 2026</time></dd></div>
-			<div><dt>Where</dt><dd>LivingDocs, <a href="https://www.google.com/maps/search/?api=1&query=Tellstrasse%2031%2C%20Z%C3%BCrich">Tellstrasse 31<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H18m0 0v4.5M18 6l-7.5 7.5M10.5 7.5H7.125A1.125 1.125 0 0 0 6 8.625v8.25A1.125 1.125 0 0 0 7.125 18h8.25a1.125 1.125 0 0 0 1.125-1.125V13.5" /></svg></a></dd></div>
-		</dl>
+		{event && date ? (
+			<dl>
+				<div><dt>When</dt><dd><time datetime={date.toISOString()}>{formattedDate} at {formattedTime}</time></dd></div>
+				<div><dt>Where</dt><dd>{event.venue}, <a href={mapsUrl}>{event.address}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H18m0 0v4.5M18 6l-7.5 7.5M10.5 7.5H7.125A1.125 1.125 0 0 0 6 8.625v8.25A1.125 1.125 0 0 0 7.125 18h8.25a1.125 1.125 0 0 0 1.125-1.125V13.5" /></svg></a></dd></div>
+			</dl>
+		) : (
+			<p class="event-message">{unavailable
+				? 'Event details are temporarily unavailable. Please check back soon.'
+				: 'The next event will be announced soon.'}</p>
+		)}
 	</div>
 </section>
 
@@ -34,8 +82,9 @@
 		text-wrap: balance;
 	}
 	.event-details { padding-block-start: var(--space-lg); border-top: 1px solid var(--content-border); }
+	.event-message { margin: 0; color: var(--color-muted); font-size: 0.875rem; line-height: 1.65; }
 	dl { display: grid; gap: var(--space-md); margin: 0; font-size: 0.875rem; line-height: 1.65; }
-	dl > div { display: grid; grid-template-columns: 3rem minmax(0, 1fr); align-items: center; gap: var(--space-md); }
+	dl > div { display: grid; grid-template-columns: 3rem minmax(0, 1fr); align-items: start; gap: var(--space-md); }
 	dt { color: var(--color-muted); }
 	dd { margin: 0; }
 	a {
