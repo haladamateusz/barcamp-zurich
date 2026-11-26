@@ -3,16 +3,16 @@ import MeetupIcon from '../assets/icons/meetup.svg';
 import LinkedInIcon from '../assets/icons/linkedin.svg';
 
 const socials = [
-	{ label: 'Meetup', Icon: MeetupIcon },
-	{ label: 'LinkedIn', Icon: LinkedInIcon },
+	{ label: 'Meetup', href: 'https://www.meetup.com/barcamp-zurich/', Icon: MeetupIcon },
+	{ label: 'LinkedIn', href: 'https://www.linkedin.com/company/barcamp-zurich', Icon: LinkedInIcon },
 ];
 ---
 
 <div class="social-icons">
-	{socials.map(({ label, Icon }) => (
-		<span role="img" aria-label={label} title={label}>
+	{socials.map(({ label, href, Icon }) => (
+		<a href={href} aria-label={label} title={label}>
 			<Icon width="20" height="20" aria-hidden="true" />
-		</span>
+		</a>
 	))}
 </div>
 
@@ -22,7 +22,7 @@ const socials = [
 		justify-content: flex-end;
 		gap: var(--space-xs);
 	}
-	.social-icons span {
+	.social-icons a {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -32,5 +32,5 @@ const socials = [
 		color: var(--color-muted);
 		transition: color 140ms ease;
 	}
-	.social-icons span:hover { color: var(--color-text); }
+	.social-icons a:hover { color: var(--color-text); }
 </style>

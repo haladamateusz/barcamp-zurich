@@ -12,7 +12,7 @@ Sora for site typography. Original SVG logo artwork, including the Montserrat wo
 - Subtle glass navbar: partially transparent fill, backdrop blur, and a fine border. Keep the mobile dropdown more opaque for legibility.
 - Keep How it works, Location, and About centered within the capsule.
 - No Join us navigation button. Original full logo on the left, slightly enlarged.
-- Meetup and LinkedIn icons from Angular Zürich on the right: 20px, unlinked, brighten on hover.
+- Meetup and LinkedIn icons from Angular Zürich on the right: 20px, link to the Barcamp Zürich profiles, brighten on hover. Mobile navigation includes the same profile links.
 - Hero background uses 17 selected technology logos (6 on mobile) from The SVG in their mono variants, tinted with muted brand blue. Space them evenly through the open areas, protecting the navbar, actual text lines, CTA, and rounded event-card surface while allowing logos close to its corners.
 - No invented event dates, venues, registration links, or attendance claims.
 
