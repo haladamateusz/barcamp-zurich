@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar.astro';
 import Hero from '../components/Hero.astro';
 import HowItWorks from '../components/HowItWorks.astro';
 import Location from '../components/Location.astro';
+import Faq from '../components/Faq.astro';
 ---
 
 <html lang="en">
@@ -56,6 +57,7 @@ import Location from '../components/Location.astro';
 						</div>
 					</figure>
 				</section>
+				<Faq />
 			</div>
 		</main>
 	</body>
@@ -71,7 +73,6 @@ import Location from '../components/Location.astro';
 		gap: 4rem;
 		align-items: center;
 		padding-block-start: var(--content-section-gap);
-		border-top: 1px solid var(--content-border);
 	}
 
 	.about-copy { grid-area: copy; }

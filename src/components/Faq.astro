@@ -1,0 +1,153 @@
+---
+const questions = [
+	{
+		question: 'Is Barcamp Zürich free?',
+		answer: 'Yes, it’s 100% free! Places are limited, so make sure to reserve your spot on Meetup.',
+	},
+	{
+		question: 'What language will the event be in?',
+		answer: 'The event will be held in English.',
+	},
+	{
+		question: 'How does the agenda work?',
+		answer: 'Participants bring their ideas, then we vote together on which talks will be presented.',
+	},
+	{
+		question: 'What kind of topic can I bring?',
+		answer: 'Anything related to tech! Share a recent achievement, a project you’ve built, or a technology you enjoy. Non-technical talks related to tech are welcome too.',
+	},
+	{
+		question: 'Will there be drinks?',
+		answer: 'Yes! Beer and non-alcoholic drinks will be available.',
+	},
+];
+---
+
+<section class="faq" id="faq" aria-labelledby="faq-heading">
+	<h2 class="content-heading" id="faq-heading">Frequently asked questions</h2>
+	<div class="faq-list">
+		{questions.map(({ question, answer }) => (
+			<details>
+				<summary>
+					<span>{question}</span>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true" focusable="false">
+						<path d="M5 12h14" />
+						<path class="plus-stroke" d="M12 5v14" />
+					</svg>
+				</summary>
+				<div class="answer"><div class="answer-inner"><p>{answer}</p></div></div>
+			</details>
+		))}
+	</div>
+</section>
+
+<script>
+	const items = Array.from(document.querySelectorAll<HTMLDetailsElement>('.faq details'));
+	const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+	const closeTimers = new Map<HTMLDetailsElement, ReturnType<typeof setTimeout>>();
+
+	const setExpanded = (item: HTMLDetailsElement, expanded: boolean) => {
+		clearTimeout(closeTimers.get(item));
+		closeTimers.delete(item);
+		const summary = item.querySelector('summary')!;
+		const answer = item.querySelector<HTMLElement>('.answer')!;
+		if (expanded) {
+			item.open = true;
+			// Establish the collapsed frame before starting the CSS transition.
+			answer.getBoundingClientRect();
+		}
+		item.dataset.expanded = String(expanded);
+		summary.setAttribute('aria-expanded', String(expanded));
+		answer.inert = !expanded;
+		if (!expanded) {
+			if (reducedMotion.matches) item.open = false;
+			else closeTimers.set(item, setTimeout(() => {
+				item.open = false;
+				closeTimers.delete(item);
+			}, 150));
+		}
+	};
+
+	items.forEach(item => {
+		item.dataset.expanded = String(item.open);
+		item.classList.add('enhanced');
+		const summary = item.querySelector('summary')!;
+		summary.setAttribute('aria-expanded', String(item.open));
+		summary.addEventListener('click', event => {
+			event.preventDefault();
+			const expanding = item.dataset.expanded !== 'true';
+			if (expanding) items.forEach(other => {
+				if (other !== item && other.dataset.expanded === 'true') setExpanded(other, false);
+			});
+			setExpanded(item, expanding);
+		});
+	});
+
+	document.addEventListener('astro:before-swap', () => {
+		closeTimers.forEach(timer => clearTimeout(timer));
+	}, { once: true });
+</script>
+
+<style>
+	.faq {
+		width: 50%;
+		margin-inline: auto;
+		--faq-duration: 200ms;
+		--faq-easing: cubic-bezier(0.22, 1, 0.36, 1);
+		padding-block-start: var(--content-section-gap);
+	}
+
+	details { border-bottom: 1px solid var(--content-border); }
+
+	summary {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-lg);
+		min-height: 44px;
+		padding-block: var(--space-lg);
+		font-weight: 500;
+		line-height: 1.5;
+		list-style: none;
+		cursor: pointer;
+	}
+
+	summary::-webkit-details-marker { display: none; }
+	summary:is(:hover, :focus-visible) { color: var(--color-brand); }
+	summary:focus-visible { outline-offset: 2px; }
+	summary svg { width: 1.5rem; height: 1.5rem; flex-shrink: 0; }
+	.plus-stroke {
+		transform-box: fill-box;
+		transform-origin: center;
+		transition: transform var(--faq-duration) var(--faq-easing), opacity var(--faq-duration) var(--faq-easing);
+	}
+	details[open]:not(.enhanced) .plus-stroke,
+	details[data-expanded="true"] .plus-stroke { transform: rotate(90deg); opacity: 0; }
+
+	details[data-expanded="false"] { --faq-duration: 150ms; }
+	.enhanced .answer {
+		display: grid;
+		grid-template-rows: 0fr;
+		opacity: 0;
+		transition: grid-template-rows var(--faq-duration) var(--faq-easing), opacity var(--faq-duration) var(--faq-easing);
+	}
+	.enhanced[data-expanded="true"] .answer { grid-template-rows: 1fr; opacity: 1; }
+	.answer-inner { min-height: 0; overflow: hidden; }
+
+	@media (max-width: 47.999rem) {
+		.faq { width: 100%; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.enhanced .answer, .plus-stroke { transition: none; }
+	}
+
+	p {
+		max-width: 48rem;
+		margin: 0;
+		padding-block-end: var(--space-lg);
+		padding-inline-end: calc(1.5rem + var(--space-lg));
+		color: var(--color-muted);
+		line-height: 1.75;
+		text-wrap: pretty;
+	}
+</style>

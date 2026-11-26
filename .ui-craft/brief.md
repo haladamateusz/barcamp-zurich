@@ -22,6 +22,8 @@ Default page background with left-aligned headline and explanation on the left, 
 
 ## Learned constraints
 
+- 2026-11-26: Separate the lower-page sections with whitespace instead of divider lines. Keep the dividers between FAQ questions to make the clickable rows clear.
+
 - 2026-11-25: About uses one brand-blue portrait backdrop with the shared 24px card corners, without a second frame. The previous blue is restored in preference to the supplied navy swatch. Keep the heads inside the rounded rectangle so the portrait matches the restrained page aesthetic. Place the portrait left and copy right on desktop to alternate with Location; retain copy first when stacked on mobile.
 
 - 2026-11-25: Keep the location map visually secondary to the location copy: cap it at 500px, align it right in the desktop grid, and align it with the copy when stacked on smaller screens. Preserve its aspect ratio and route animation.
