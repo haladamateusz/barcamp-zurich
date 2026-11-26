@@ -9,10 +9,6 @@ import HeroBackground from './HeroBackground.astro';
 		<div class="hero-content">
 		<h1 id="hero-heading">An unconference <span>shaped by attendees.</span></h1>
 		<p>No fixed agenda. Give a 10-minute talk or come to listen - the choice is yours.</p>
-		<a class="hero-link" href="#how-it-works">
-			How it works
-			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16m-7-7 7 7-7 7" /></svg>
-		</a>
 		</div>
 		<NextEvent />
 	</div>
@@ -55,24 +51,6 @@ import HeroBackground from './HeroBackground.astro';
 		line-height: 1.7;
 		text-wrap: pretty;
 	}
-	.hero-link {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: var(--space-lg);
-		min-height: 48px;
-		margin-top: var(--space-xl);
-		padding: var(--space-sm) var(--space-lg);
-		border-radius: var(--radius-pill);
-		background: var(--color-action);
-		color: var(--color-action-text);
-		font-size: 0.9375rem;
-		font-weight: 500;
-		text-decoration: none;
-		transition: background-color 140ms ease;
-	}
-	.hero-link:hover { background: var(--color-action-hover); }
-	.hero-link:focus-visible { outline-color: var(--color-brand); }
 	@media (max-width: 63.999rem) {
 		.hero-layout { grid-template-columns: 1fr; gap: 3rem; }
 	}

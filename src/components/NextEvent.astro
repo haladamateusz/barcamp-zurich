@@ -56,6 +56,7 @@ const mapsUrl = event
 				: 'The next event will be announced soon.'}</p>
 		)}
 	</div>
+	<a class="event-rsvp" href="https://www.meetup.com/barcamp-zurich/events/">RSVP on Meetup</a>
 </section>
 
 <style>
@@ -102,6 +103,23 @@ const mapsUrl = event
 	a:is(:hover, :focus-visible) { color: color-mix(in oklch, var(--color-brand) 70%, var(--color-text)); }
 	a:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 2px; }
 	a svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
+	.event-rsvp {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+		min-height: 48px;
+		padding: var(--space-sm) var(--space-lg);
+		border-radius: var(--radius-pill);
+		background: var(--color-action);
+		color: var(--color-action-text);
+		font-size: 0.9375rem;
+		font-weight: 500;
+		transition: background-color 140ms ease;
+	}
+	.event-rsvp:is(:hover, :focus-visible) {
+		background: var(--color-action-hover);
+		color: var(--color-action-text);
+	}
 	@media (prefers-reduced-motion: reduce) {
 		a { transition: none; }
 	}
