@@ -29,9 +29,9 @@ import HeroBackground from './HeroBackground.astro';
 	}
 	.hero-layout {
 		display: grid;
-		grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+		grid-template-columns: minmax(0, 2fr) minmax(20rem, 1fr);
 		align-items: center;
-		gap: clamp(2rem, 5vw, 5rem);
+		gap: clamp(2rem, 3vw, 3rem);
 	}
 	.hero-content { min-width: 0; }
 	h1 {
@@ -44,7 +44,7 @@ import HeroBackground from './HeroBackground.astro';
 	}
 	h1 span { display: block; }
 	p {
-		max-width: 36rem;
+		max-width: 100%;
 		margin: var(--space-lg) 0 0;
 		color: var(--color-muted);
 		font-size: 1.0625rem;
@@ -57,6 +57,6 @@ import HeroBackground from './HeroBackground.astro';
 	@media (max-width: 40rem) {
 		.hero { padding-block: 10rem 7rem; }
 		h1 { font-size: clamp(2.25rem, 8.3vw, 3.5rem); letter-spacing: -0.045em; }
-		p { max-width: 28rem; font-size: 1rem; }
+		p { font-size: 1rem; }
 	}
 </style>

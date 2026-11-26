@@ -22,6 +22,8 @@ Default page background with left-aligned headline and explanation on the left, 
 
 ## Learned constraints
 
+- 2026-11-26: Give the hero heading more horizontal room with a 2:1 desktop column ratio and a 32–48px gap. Keep the event card at least 320px wide and retain the stacked layout below 1024px. This supersedes the earlier 1.6:1 ratio.
+
 - 2026-11-26: Separate the lower-page sections with whitespace instead of divider lines. Keep the dividers between FAQ questions to make the clickable rows clear.
 
 - 2026-11-25: About uses one brand-blue portrait backdrop with the shared 24px card corners, without a second frame. The previous blue is restored in preference to the supplied navy swatch. Keep the heads inside the rounded rectangle so the portrait matches the restrained page aesthetic. Place the portrait left and copy right on desktop to alternate with Location; retain copy first when stacked on mobile.
