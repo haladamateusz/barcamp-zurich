@@ -38,7 +38,9 @@ import Faq from '../components/Faq.astro';
 				<section class="about" id="about" aria-labelledby="about-heading">
 					<div class="about-copy">
 						<h2 class="content-heading" id="about-heading">About</h2>
-						<p>We met at local meetups and saw a gap in Zürich’s tech scene. As language-specific groups struggled to keep their communities active, we wanted a place to connect across technologies. At Barcamp Zürich, we talk about anything cool in tech - whatever language, tool or idea you’re into.</p>
+						<p>Zürich has an incredible tech community, but we often meet within our own technology bubbles.</p>
+						<p>We started Barcamp Zürich to bring those communities together: to exchange ideas, discover new perspectives and connect beyond programming languages, frameworks and job titles.</p>
+						<p>Whatever your stack, background or experience level, if you’re curious about tech, you’re welcome here.</p>
 						<p class="organizer-names">Mateusz, Hugo and Max</p>
 						<p class="organizer-caption">The trio behind Barcamp Zürich.</p>
 					</div>
@@ -76,6 +78,7 @@ import Faq from '../components/Faq.astro';
 	}
 
 	.about-copy { grid-area: copy; }
+	.about-copy > p + p:not([class]) { margin-top: var(--space-md); }
 	.about-copy .organizer-names { margin-top: var(--space-xl); color: var(--color-text); font-weight: 500; }
 	.organizer-caption { margin-top: var(--space-xs); font-size: 0.875rem; }
 
