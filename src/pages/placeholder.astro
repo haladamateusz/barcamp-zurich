@@ -1,0 +1,47 @@
+---
+import fireLogo from '../assets/barcamp-fire.svg?raw';
+import HeroBackground from '../components/HeroBackground.astro';
+import '../styles/global.css';
+
+export const prerender = true;
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>barcamp zürich</title>
+	</head>
+	<body>
+		<main class="hero">
+			<HeroBackground iconScale={1.33} evenSpacing namesShortcut />
+			<h1 data-hero-background-obstacle>
+				<Fragment set:html={fireLogo} />
+			</h1>
+		</main>
+	</body>
+</html>
+
+<style>
+	.hero {
+		position: relative;
+		isolation: isolate;
+		display: grid;
+		place-items: center;
+		min-height: 100svh;
+		padding: var(--space-lg);
+		overflow: hidden;
+	}
+
+	h1 {
+		width: min(100%, 58rem);
+		margin: 0;
+	}
+
+	h1 :global(svg) {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+</style>

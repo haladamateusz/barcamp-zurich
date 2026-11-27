@@ -1,25 +1,29 @@
 ---
-const technologies = [
-	// The first six retain a cross-section of disciplines on mobile.
-	'react', 'python', 'rust', 'pytorch', 'docker', 'github-actions',
-	'flutter', 'hugging-face', 'kubernetes', 'terraform', 'postgresql', 'grafana',
-	'angular', 'go', 'ollama', 'typescript', 'redis',
-];
+interface Props {
+	iconScale?: number;
+	evenSpacing?: boolean;
+	namesShortcut?: boolean;
+}
 
-const icons = technologies.map((slug, index) => ({
-	 slug,
-	 style: {
-		'--icon': `url('/icons/technologies/${slug}.svg')`,
-		'--size': `${(40 + (index * 7 % 21)) * 0.85 * 0.85}px`,
-		'--tilt': `${(index * 11 % 19) - 9}deg`,
-	 },
+const { iconScale = 1, evenSpacing = false, namesShortcut = false } = Astro.props;
+const iconSlots = Array.from({ length: 17 }, (_, index) => ({
+	'--size': `${(40 + (index * 7 % 21)) * 0.85 * 0.85 * iconScale}px`,
+	'--tilt': `${(index * 11 % 19) - 9}deg`,
 }));
 ---
 
-<div class="hero-background" aria-hidden="true">
-	{icons.map(({ slug, style }) => (
-		<span class="technology-position" style={style} data-technology={slug}>
-			<span class="technology-icon"></span>
+<div
+	class="hero-background"
+	data-even-spacing={evenSpacing || undefined}
+	data-names-shortcut={namesShortcut || undefined}
+	aria-hidden="true"
+>
+	{iconSlots.map(style => (
+		<span class="technology-position" style={style}>
+			<span class="technology-mark">
+				<span class="technology-icon"></span>
+				{namesShortcut && <span class="technology-name"></span>}
+			</span>
 		</span>
 	))}
 </div>
@@ -46,6 +50,11 @@ const icons = technologies.map((slug, index) => ({
 		height: var(--size);
 		transform: translate(-50%, -50%) rotate(var(--tilt));
 	}
+	.technology-mark {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
 	.technology-icon {
 		display: block;
 		width: 100%;
@@ -53,4 +62,19 @@ const icons = technologies.map((slug, index) => ({
 		background: var(--color-hero-icon);
 		mask: var(--icon) center / contain no-repeat;
 	}
+	.technology-name {
+		display: none;
+		position: absolute;
+		top: calc(100% + 0.25rem);
+		left: 50%;
+		transform: translateX(-50%) rotate(calc(-1 * var(--tilt)));
+		color: var(--color-muted);
+		background: var(--color-page);
+		border-radius: 0.25rem;
+		padding-inline: 0.25rem;
+		font-size: 0.75rem;
+		line-height: 1.3;
+		white-space: nowrap;
+	}
+	.hero-background[data-show-names] .technology-name { display: block; }
 </style>

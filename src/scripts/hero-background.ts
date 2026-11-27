@@ -1,6 +1,77 @@
 type Point = { x: number; y: number };
 type Rect = { left: number; top: number; right: number; bottom: number; radius?: number; gap?: number };
 
+const technologies = {
+	react: 'React',
+	python: 'Python',
+	rust: 'Rust',
+	pytorch: 'PyTorch',
+	docker: 'Docker',
+	'github-actions': 'GitHub Actions',
+	flutter: 'Flutter',
+	'hugging-face': 'Hugging Face',
+	kubernetes: 'Kubernetes',
+	terraform: 'Terraform',
+	postgresql: 'PostgreSQL',
+	grafana: 'Grafana',
+	angular: 'Angular',
+	go: 'Go',
+	ollama: 'Ollama',
+	typescript: 'TypeScript',
+	redis: 'Redis',
+	javascript: 'JavaScript',
+	java: 'Java',
+	c: 'C',
+	cplusplus: 'C++',
+	csharp: 'C#',
+	kotlin: 'Kotlin',
+	swift: 'Swift',
+	ruby: 'Ruby',
+	php: 'PHP',
+	nodejs: 'Node.js',
+	vue: 'Vue.js',
+	svelte: 'Svelte',
+	astro: 'Astro',
+	nextjs: 'Next.js',
+	nuxt: 'Nuxt',
+	vite: 'Vite',
+	tailwindcss: 'Tailwind CSS',
+	reactnative: 'React Native',
+	django: 'Django',
+	fastapi: 'FastAPI',
+	laravel: 'Laravel',
+	'spring-boot': 'Spring Boot',
+	mysql: 'MySQL',
+	sqlite: 'SQLite',
+	mongodb: 'MongoDB',
+	mariadb: 'MariaDB',
+	elasticsearch: 'Elasticsearch',
+	'apache-kafka': 'Apache Kafka',
+	rabbitmq: 'RabbitMQ',
+	'apache-spark': 'Apache Spark',
+	duckdb: 'DuckDB',
+	clickhouse: 'ClickHouse',
+	git: 'Git',
+	github: 'GitHub',
+	gitlab: 'GitLab',
+	jenkins: 'Jenkins',
+	ansible: 'Ansible',
+	helm: 'Helm',
+	prometheus: 'Prometheus',
+	nginx: 'NGINX',
+	cloudflare: 'Cloudflare',
+	vercel: 'Vercel',
+	netlify: 'Netlify',
+	opentelemetry: 'OpenTelemetry',
+	tensorflow: 'TensorFlow',
+	jupyter: 'Jupyter',
+	openai: 'OpenAI',
+	langchain: 'LangChain',
+	'scikit-learn': 'scikit-learn',
+	playwright: 'Playwright',
+	vitest: 'Vitest',
+};
+
 const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 
 function clearance(point: Point, width: number, height: number, obstacles: Rect[]) {
@@ -15,7 +86,7 @@ function clearance(point: Point, width: number, height: number, obstacles: Rect[
 
 // Fill only the usable negative space. Farthest-point sampling keeps neighboring
 // logos similarly spaced even when the content changes shape at a breakpoint.
-export function distributeLogos(width: number, height: number, obstacles: Rect[], originalRadii: number[], sizeScale = 1, preferredRegions: Rect[] = []): (Point & { sizeScale: number })[] {
+export function distributeLogos(width: number, height: number, obstacles: Rect[], originalRadii: number[], sizeScale = 1, preferredRegions: Rect[] = [], evenSpacing = false): (Point & { sizeScale: number })[] {
 	const radii = originalRadii.map(radius => radius * sizeScale);
 	const padding = width < 640 ? 6 : 12;
 	const footprint = Math.max(...radii) + padding;
@@ -53,7 +124,41 @@ export function distributeLogos(width: number, height: number, obstacles: Rect[]
 	}
 	// Compact screens retain the original logo size; never shrink their marks.
 	if (width >= 1024 && anchors.length < radii.length && sizeScale > 0.55) {
-		return distributeLogos(width, height, obstacles, originalRadii, sizeScale * 0.9, preferredRegions);
+		return distributeLogos(width, height, obstacles, originalRadii, sizeScale * 0.9, preferredRegions, evenSpacing);
+	}
+	if (evenSpacing && anchors.length > 1) {
+		// Center each icon in its share of the available space (Lloyd relaxation).
+		const step = Math.max(10, Math.sqrt(width * height / 2400));
+		const samples: Point[] = [];
+		for (let y = step / 2; y < height; y += step) {
+			for (let x = step / 2; x < width; x += step) {
+				const point = { x, y };
+				if (clearance(point, width, height, obstacles) > 0) samples.push(point);
+			}
+		}
+		for (let pass = 0; pass < 6; pass++) {
+			const cells = anchors.map(() => ({ x: 0, y: 0, count: 0 }));
+			for (const point of samples) {
+				let nearest = 0;
+				let best = Infinity;
+				for (const [index, anchor] of anchors.entries()) {
+					const squared = (anchor.x - point.x) ** 2 + (anchor.y - point.y) ** 2;
+					if (squared < best) { best = squared; nearest = index; }
+				}
+				const cell = cells[nearest];
+				cell.x += point.x;
+				cell.y += point.y;
+				cell.count++;
+			}
+			cells.forEach((cell, i) => {
+				if (!cell.count) return;
+				const center = { x: cell.x / cell.count, y: cell.y / cell.count };
+				if (clearance(center, width, height, obstacles) >= footprint &&
+					anchors.every((other, j) => i === j || distance(center, other) >= radii[i] + radii[j] + padding * 2)) {
+					anchors[i] = center;
+				}
+			});
+		}
 	}
 	return anchors.map(point => ({ ...point, sizeScale }));
 }
@@ -85,12 +190,36 @@ export function initHeroBackground(background: HTMLElement) {
 	const hero = background.closest<HTMLElement>('.hero');
 	if (!hero) return;
 	const allIcons = [...background.querySelectorAll<HTMLElement>('.technology-position')];
+	// Sample without replacement once so resizing keeps the same selection.
+	const selection = Object.entries(technologies);
+	for (let index = 0; index < allIcons.length; index++) {
+		const other = index + Math.floor(Math.random() * (selection.length - index));
+		[selection[index], selection[other]] = [selection[other], selection[index]];
+	}
+	const evenSpacing = background.hasAttribute('data-even-spacing');
+	const namesShortcut = background.hasAttribute('data-names-shortcut');
 	const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-	const content = [...document.querySelectorAll<HTMLElement>('.site-header, .hero-content, .hero .next-event')];
+	const content = [...document.querySelectorAll<HTMLElement>('.site-header, .hero-content, .hero .next-event, .hero [data-hero-background-obstacle]')];
 	let animations: Animation[] = [];
 	let visible = false;
 	let frame = 0;
 	let disposed = false;
+	let typed = '';
+	function handleNamesShortcut(event: KeyboardEvent) {
+		if (event.repeat) return;
+		if (event.defaultPrevented || event.isComposing || event.ctrlKey || event.metaKey || event.altKey
+			|| (event.target instanceof HTMLElement
+				&& (event.target.isContentEditable || event.target.matches('input, textarea, select')))) {
+			typed = '';
+			return;
+		}
+
+		typed = /^[a-z]$/i.test(event.key) ? (typed + event.key.toLowerCase()).slice(-5) : '';
+		if (typed === 'names') {
+			background.toggleAttribute('data-show-names');
+			typed = '';
+		}
+	}
 	const sync = () => animations.forEach(animation => {
 		if (visible && !document.hidden && !reducedMotion.matches) animation.play();
 		else animation.pause();
@@ -121,6 +250,8 @@ export function initHeroBackground(background: HTMLElement) {
 				}
 				const button = element.querySelector('.hero-link');
 				if (button) obstacles.push(local(button.getBoundingClientRect(), { gap: 10, radius: 24 }));
+			} else if (element.hasAttribute('data-hero-background-obstacle')) {
+				obstacles.push(local(element.getBoundingClientRect(), { gap: 12 }));
 			} else {
 				obstacles.push(local(element.getBoundingClientRect(), element.matches('.next-event')
 					? { radius: 24 } : { radius: 40, gap: 12 }));
@@ -132,7 +263,7 @@ export function initHeroBackground(background: HTMLElement) {
 		const preferredRegions: Rect[] = [];
 		if (bounds.width >= 1024) {
 			const card = hero!.querySelector('.next-event');
-			const heading = hero!.querySelector('h1');
+			const heading = hero!.querySelector('.hero-content h1');
 			const description = hero!.querySelector('.hero-content p');
 			const button = hero!.querySelector('.hero-link');
 			const copy = hero!.querySelector('.hero-content');
@@ -162,12 +293,19 @@ export function initHeroBackground(background: HTMLElement) {
 				}
 			}
 		}
-		const positions = distributeLogos(bounds.width, bounds.height, obstacles, radii, 1, preferredRegions);
+		const positions = distributeLogos(bounds.width, bounds.height, obstacles, radii, 1, preferredRegions, evenSpacing);
 		animations = [];
 		icons.forEach((icon, index) => {
 			const position = positions[index];
 			icon.hidden = !position;
 			if (!position) return;
+			const [slug, name] = selection[index];
+			icon.dataset.technology = slug;
+			// Give corrected masks fresh URLs for browsers that cached the original SVGs.
+			const version = slug === 'csharp' || slug === 'nextjs' ? '?v=2' : '';
+			icon.style.setProperty('--icon', `url('/icons/technologies/${slug}.svg${version}')`);
+			const label = icon.querySelector('.technology-name');
+			if (label) label.textContent = name;
 			icon.style.left = `${position.x}px`;
 			icon.style.top = `${position.y}px`;
 			icon.style.width = icon.style.height = `${sizes[index] * position.sizeScale}px`;
@@ -178,9 +316,9 @@ export function initHeroBackground(background: HTMLElement) {
 			};
 			const phase = random() * Math.PI * 2;
 			const phaseY = random() * Math.PI * 2;
-			const compactScale = bounds.width < 1024 ? 0.85 : 1;
-			const width = (90 + random() * 60) * compactScale;
-			const height = (65 + random() * 45) * compactScale;
+			const driftScale = evenSpacing ? 0.33 : bounds.width < 1024 ? 0.85 : 1;
+			const width = (90 + random() * 60) * driftScale;
+			const height = (65 + random() * 45) * driftScale;
 			const wave = Array.from({ length: 181 }, (_, step) => {
 				const t = step / 180 * Math.PI * 2;
 				return {
@@ -190,7 +328,7 @@ export function initHeroBackground(background: HTMLElement) {
 			});
 			const path = fitLogoPath(position, wave, radii[index] * position.sizeScale, bounds.width, bounds.height, obstacles, positions);
 			const frames = path.map((point, step) => ({ transform: `translate(${point.x}px, ${point.y}px) rotate(${Math.sin(step / 180 * Math.PI * 4 + phase) * 6}deg)` }));
-			const animation = icon.querySelector('.technology-icon')!.animate(frames,
+			const animation = icon.querySelector('.technology-mark')!.animate(frames,
 				{ duration: 80000 + random() * 40000, iterations: Infinity });
 			animation.pause();
 			animation.currentTime = random() * 84000;
@@ -210,6 +348,7 @@ export function initHeroBackground(background: HTMLElement) {
 	layout();
 	void document.fonts.ready.then(scheduleLayout);
 	document.addEventListener('visibilitychange', sync);
+	if (namesShortcut) document.addEventListener('keydown', handleNamesShortcut);
 	reducedMotion.addEventListener('change', sync);
 	document.addEventListener('astro:before-swap', () => {
 		disposed = true;
@@ -218,6 +357,7 @@ export function initHeroBackground(background: HTMLElement) {
 		resizeObserver.disconnect();
 		animations.forEach(animation => animation.cancel());
 		document.removeEventListener('visibilitychange', sync);
+		document.removeEventListener('keydown', handleNamesShortcut);
 		reducedMotion.removeEventListener('change', sync);
 	}, { once: true });
 }
