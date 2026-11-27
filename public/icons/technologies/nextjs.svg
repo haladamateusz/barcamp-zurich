@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="diagonal-fade" x1="55.633%" y1="56.385%" x2="83.228%" y2="96.08%">
+      <stop offset="0"/>
+      <stop offset="1" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="vertical-fade" x1="50%" y1="0%" x2="49.953%" y2="73.438%">
+      <stop offset="0"/>
+      <stop offset="1" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <mask id="letter-cutout" maskUnits="userSpaceOnUse" x="0" y="0" width="256" height="256">
+    <rect width="256" height="256" fill="white"/>
+    <path fill="url(#diagonal-fade)" d="M212.634 224.028L98.335 76.8H76.8v102.357h17.228V98.68L199.11 234.446a128 128 0 0 0 13.524-10.418"/>
+    <path fill="url(#vertical-fade)" d="M163.556 76.8h17.067v102.4h-17.067z"/>
+  </mask>
+  <circle cx="128" cy="128" r="128" mask="url(#letter-cutout)"/>
+</svg>
